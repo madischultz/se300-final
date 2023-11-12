@@ -2,15 +2,10 @@ package com.se300.ledger.service;
 
 import com.se300.ledger.model.*;
 import com.se300.ledger.repository.AccountRepository;
-import com.se300.ledger.repository.StoreRepository;
 import com.se300.ledger.repository.TransactionRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.DependsOn;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import java.util.*;
 import static java.util.Map.*;
