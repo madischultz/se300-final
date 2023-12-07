@@ -13,7 +13,7 @@ public class LedgerRestExternalMockControllerTest {
     @Test
     void testGetAccountById() throws JSONException {
 
-        String expectedJson = "{\"address\" : \"1\", \"balance\" : 45}";
+        String expectedJson = "{\"address\" : \"1\", \"balance\" : 46}";
 
         ExtractableResponse<Response> response = RestAssured
                 .given()
@@ -21,7 +21,7 @@ public class LedgerRestExternalMockControllerTest {
                 .auth().basic("sergey", "chapman")
                 .contentType(ContentType.JSON)
                 .when()
-                .get("https://6546c4c1902874dff3abd4bd.mockapi.io/api/accounts/1")
+                .get("https://656e44f6bcc5618d3c24bc13.mockapi.io/accounts/1")
                 .then()
                 .statusCode(200)
                 .extract();
@@ -32,6 +32,20 @@ public class LedgerRestExternalMockControllerTest {
     @Test
     public void testGetTransactionById() throws JSONException {
 
-        //TODO: Implement Transaction External Retrieval Test Method
+        //Transaction External Retrieval Test Method
+        String expectedJson = "{\"amount\":77,\"fee\":24,\"note\":\"note 1\",\"payer\":\"interactive\",\"receiver\":\"Mandatory\",\"transactionId\":\"1\"}";
+
+        ExtractableResponse<Response> response = RestAssured
+                .given()
+                .filter(new RequestLoggingFilter())
+                .auth().basic("sergey", "chapman")
+                .contentType(ContentType.JSON)
+                .when()
+                .get("https://656e44f6bcc5618d3c24bc13.mockapi.io/transactions/1")
+                .then()
+                .statusCode(200)
+                .extract();
+
+        JSONAssert.assertEquals(expectedJson, response.body().asPrettyString(),true);
     }
 }

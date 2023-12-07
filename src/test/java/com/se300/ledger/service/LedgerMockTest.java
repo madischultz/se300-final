@@ -2,6 +2,7 @@ package com.se300.ledger.service;
 
 import com.se300.ledger.TestSmartStoreApplication;
 import com.se300.ledger.model.Account;
+import com.se300.ledger.model.Transaction;
 import com.se300.ledger.repository.AccountRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +14,11 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
@@ -47,5 +52,20 @@ public class LedgerMockTest {
         assertEquals(0, differences.size());
     }
 
-    //TODO: Create Another Ledger Mock Test
+    @Test
+    void testGetAccountBalances() throws LedgerException {
+
+        assertNull(ledger.getAccountBalances());
+
+    }
+
+    @Test
+    void testGetAccountBalance() throws LedgerException {
+        ledger.createAccount("test");
+        assertThrows(LedgerException.class, ()->ledger.getAccountBalance("test"));
+    }
+
+
+
+    //DONE: Create Another Ledger Mock Test
 }

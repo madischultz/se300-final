@@ -44,6 +44,19 @@ public class LedgerRestInternalMockControllerTest {
                         response()
                                 .withBody("{\n  \"address\" : \"master\",\n \"balance\" : 2147483647\n}")
                 );
+        new MockServerClient("localhost", 1090)
+                .when(
+                        request()
+                                .withMethod("GET")
+                                .withPath("/transactions"),
+                        Times.unlimited(),
+                        TimeToLive.unlimited(),
+                        0
+                )
+                .respond(
+                        response()
+                                .withBody("{\n  \"transactionId\" : \"1\",\n \"amount\" : 50\n, \n \"fee\" : 10\n, \n  \"note\" : \"test\",  \n  \"payer\" : \"dummyPayer\",  \n  \"receiver\" : \"dummyReceiver\"}")
+                );
     }
     @Test
     void testGetAccountById() throws JSONException {
@@ -67,6 +80,20 @@ public class LedgerRestInternalMockControllerTest {
     @Test
     public void testGetTransactionById() throws JSONException {
 
-        //TODO: Implement Transaction Internal Retrieval Test Method
+        //DONE: Implement Transaction Internal Retrieval Test Method
+        String expectedJson = "{\"transactionId\" : \"1\", \"amount\" : 50, \"fee\" : 10, \"note\" : \"test\", \"payer\" : \"dummyPayer\", \"receiver\" : \"dummyReceiver\"}";
+
+        ExtractableResponse<Response> response = RestAssured
+                .given()
+                .filter(new RequestLoggingFilter())
+                .auth().basic("sergey", "chapman")
+                .contentType(ContentType.JSON)
+                .when()
+                .get("http://localhost:" + 1090 + "/transactions")
+                .then()
+                .statusCode(200)
+                .extract();
+
+        JSONAssert.assertEquals(expectedJson, response.body().asPrettyString(),true);
     }
 }

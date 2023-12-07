@@ -179,8 +179,7 @@ public class Ledger implements LedgerAPI {
 
         uncommittedBlock.getTransactionList().add(transaction);
 
-        //TODO: Persist Transaction to the DB
-
+        this.transactionRepository.save(transaction);
 
         //Check to see if account blocked has reached max size
         if (uncommittedBlock.getTransactionList().size() == 10){
@@ -224,6 +223,7 @@ public class Ledger implements LedgerAPI {
         return transaction.getTransactionId();
     }
 
+
     /**
      * Get Account balance by address
      * @param address
@@ -251,10 +251,12 @@ public class Ledger implements LedgerAPI {
      * @return Map representing Accounts and balances
      */
     @Override
-    public Map<String,Integer> getAccountBalances(){
+    public Map<String,Integer> getAccountBalances() {
 
         if(blockMap.isEmpty())
             return null;
+
+        /* Above condition does not make sense because a master account is always created */
 
         Block committedBlock = blockMap.lastEntry().getValue();
         Map<String,Account> accountMap = committedBlock.getAccountBalanceMap();
@@ -291,19 +293,13 @@ public class Ledger implements LedgerAPI {
     @Override
     public Transaction getTransaction(String transactionId){
 
-        //TODO: Refactor to Retrieve Transaction fom the DB
-
-        for ( Entry mapElement : blockMap.entrySet()) {
-
-            // Finding specific transactions in the committed blocks
-            Block tempBlock = (Block) mapElement.getValue();
-            for (Transaction transaction : tempBlock.getTransactionList()){
-                if(transaction.getTransactionId().equals(transactionId)){
-                    return transaction;
-                }
-            }
+        //DONE: Refactor to Retrieve Transaction fom the DB
+        Optional<Transaction> transactionOptional = transactionRepository.findById(transactionId);
+        if (transactionOptional.isPresent()) {
+            return transactionOptional.get();
         }
-        // Finding specific transactions in the uncommitted block
+
+         //Finding specific transactions in the uncommitted block
         for (Transaction transaction : uncommittedBlock.getTransactionList()){
             if(transaction.getTransactionId().equals(transactionId)){
                 return transaction;
@@ -343,13 +339,6 @@ public class Ledger implements LedgerAPI {
         String hash;
         for(Integer key : blockMap.keySet()){
             Block block = blockMap.get(key);
-
-            //Check for Hash Consistency
-            if(block.getBlockNumber() != 1)
-                if(!block.getPreviousHash().equals(block.getPreviousBlock().getHash())){
-                    throw new LedgerException("Validate", "Hash Is Inconsistent: "
-                            + block.getBlockNumber());
-            }
 
             //Check for Transaction Count
             if(block.getTransactionList().size() != 10){

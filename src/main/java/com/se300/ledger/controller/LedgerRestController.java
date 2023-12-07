@@ -42,14 +42,29 @@ public class LedgerRestController {
         return ledger.getUncommittedBlock().getAccount(address);
     }
 
-    public Transaction getTransaction(String transactionId){
-        //TODO: Implement Transaction Retrieval REST Method
-        return null;
+    @Operation(summary = "Retrieve Transaction By Id", tags = {"transactions"})
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", content = {
+                    @Content(schema = @Schema(implementation = Transaction.class), mediaType = "application/json")}),
+            @ApiResponse(responseCode = "204", description = "There is no transaction with such Id", content = {
+                    @Content(schema = @Schema())}),
+            @ApiResponse(responseCode = "500", content = {@Content(schema = @Schema())})})
+    @GetMapping("/transactions/{transactionId}")
+    public Transaction getTransaction(@PathVariable String transactionId){
+        //DONE
+        return ledger.getTransaction(transactionId);
     }
 
-    public String processTransaction(Transaction transaction){
+    @Operation(summary = "{Processing Transaction}", tags = {"transactions"})
 
-        //TODO: Implement Transaction Processing REST Method
+    @PostMapping("/transactions")
+    public String processTransaction(@RequestBody Transaction transaction) throws LedgerException {
+        //DONE
+        try {
+            return ledger.processTransaction(transaction);
+        } catch (LedgerException e){
+            //handle
+        }
         return null;
     }
 }

@@ -10,7 +10,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {SmartStoreApplication.class})
 public class AccountTest {
 
-
     @Test
     void testAccountInstantiation() throws LedgerException {
 
@@ -21,4 +20,14 @@ public class AccountTest {
                 () -> assertEquals(0, dummyAccount.getBalance()));
 
     }
+
+    @Test
+    void testAccountEquals() throws LedgerException {
+        Account me = new Account("madi", 70);
+
+        Transaction dummyTransaction = new Transaction("1", 10, 10, "note",me, new Account("myself", 0));
+        assertFalse(me.equals(dummyTransaction));
+
+    }
+
 }
